@@ -1,8 +1,9 @@
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
-
+import config
+key = config.get_key()
 # 💡 Sustituye esto por tu API key real
-API_KEY = "TU_API_KEY_AQUI"
+print(key) #Prueba
 
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Responde con el mismo mensaje que recibió
@@ -11,7 +12,7 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 def main():
     # Crea la aplicación
-    app = ApplicationBuilder().token(API_KEY).build()
+    app = ApplicationBuilder().token(key).build()
 
     # Añade el handler que responderá a todos los mensajes de texto
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
