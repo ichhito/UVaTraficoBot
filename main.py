@@ -9,11 +9,17 @@ key = config.get_key()
 # ==== VISTAS / MENÚ ====
 def main_menu_keyboard() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton("🗺️ Ver cercanos", callback_data="menu:nearby")],
+        [InlineKeyboardButton("🗺️ Ver incidentes", callback_data="menu:check")],
         [InlineKeyboardButton("📝 Reportar incidente", callback_data="menu:report")],
         [InlineKeyboardButton("🔔 Suscripciones", callback_data="menu:subs")],
         [InlineKeyboardButton("❓ Ayuda", callback_data="menu:help")],
         [InlineKeyboardButton("ℹ️ Sobre el bot", callback_data="menu:about")]
+    ])
+def check_menu_keyboard() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("⏱️ Ver recientes", callback_data="menu:checkRecent")],
+        [InlineKeyboardButton("🗺️ Ver cercanos", callback_data="menu:checkClose")],
+        [InlineKeyboardButton("⬅️ Volver", callback_data="menu:root")]
     ])
 
 # ==== HANDLERS ====
@@ -37,14 +43,11 @@ async def on_menu_click(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()  # ack rápido para UX
 
     data = query.data  # p.ej. "menu:nearby"
-    if data == "menu:nearby":
+    if data == "menu:check":
         # Aquí luego pedirás ubicación y listarás posts cercanos
         await query.edit_message_text(
-            "🔎 Envíame tu ubicación para buscar incidentes cercanos.\n\n"
-            "👉 Puedes compartirla desde el clip (📎) > Ubicación.",
-            reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("⬅️ Volver", callback_data="menu:root")]
-            ])
+            "Elige una opción: \n",
+            reply_markup=check_menu_keyboard()
         )
 
     elif data == "menu:report":
@@ -87,6 +90,32 @@ async def on_menu_click(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="MarkdownV2",
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("⬅️ Volver", callback_data="menu:root")]
+            ])
+        )
+    elif data == "menu:checkRecent":
+        # Mostrar incidentes ordenados por fecha
+        #PLACEHOLDER: En el caso real se sacaran los datos con una base de datos o algo asi
+        await query.edit_message_text(
+            "🕑 Incidentes recientes:\n"
+            "1) Accidente en A-62 km 120\n"
+            "2) Retención en Pº Zorrilla km 5\n"
+            "3) Obras en Calle Real\n\n"
+            "Selecciona una opción para más detalles.",
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("⬅️ Volver", callback_data="menu:check")]
+            ])
+        )
+
+    elif data == "menu:checkClose":
+        # Mostrar incidentes cercanos a la ubicación del usuario
+        #PLACEHOLDER: En el caso real se sacaran los datos con una base de datos o algo asi
+        await query.edit_message_text(
+            "📍 Incidentes cercanos a tu ubicación:\n"
+            "1) Retención en Calle Mayor (200m)\n"
+            "2) Obras en Av. de la Constitución (500m)\n\n"
+            "Selecciona una opción para más detalles.",
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("⬅️ Volver", callback_data="menu:check")]
             ])
         )
 
